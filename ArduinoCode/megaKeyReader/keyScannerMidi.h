@@ -6,7 +6,7 @@
 void readManuals(void);
 void parseLeft(char changedBits, char thePort, char offset, char channel);
 void midiCommandToQueue(char channel, char cmd, char pitch);
-void parseRight(char changedBits, char thePort, char offset, char channel);
+void parseRight(unsigned char changedBits, char thePort, char offset, char channel);
 void binaryCharPrint(char theNumber);
 void binaryIntPrint(int theNumber);
 unsigned char debounce(unsigned char currentbits, char number);
