@@ -1,6 +1,7 @@
 #include "megaKeyReader.h"
 
 unsigned char ucPreviousKeyState[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+unsigned char ucPreviousPedalState[] = {0, 0};
 unsigned char ucDebouce1[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 unsigned char ucDebouce2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 unsigned char ucDebouce3[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -83,6 +84,15 @@ void readManuals(){
  // Serial.println("");
 }
 
+void readPedals(void)
+{
+  for(unsigned char c=0x02; c; c >>=1)
+  {
+    //set the scanner pin
+    delay(1);
+  }
+}
+
 unsigned char debounce(unsigned char currentbits, char number){
   unsigned char temp1, temp2,temp3,temp4, temp5, debounced=0;
 
@@ -127,6 +137,8 @@ void parseLeft(char changedBits, char thePort, char offset, char channel){
        count++;
    }
 }
+
+
 
 void midiCommandToQueue(char channel, char cmd, char pitch){
     
