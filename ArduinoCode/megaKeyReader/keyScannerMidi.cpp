@@ -1,7 +1,7 @@
 #include "megaKeyReader.h"
 
 unsigned char ucPreviousKeyState[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-unsigned char ucPreviousPedalState[] = {0, 0};
+unsigned char ucPreviousPedalState[] = {0, 0, 0, 0};
 unsigned char ucDebouce1[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 unsigned char ucDebouce2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 unsigned char ucDebouce3[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -84,12 +84,34 @@ void readManuals(){
  // Serial.println("");
 }
 
+void testPedals(){
+  for(unsigned char c=0x02; c; c >>=1){
+    PORTG = c;
+    delay(1);
+    Serial.print("Port L |");
+    binaryCharPrint(PINL);
+    Serial.print("| Port B |");
+    binaryCharPrint(PINB);
+    
+  }
+  Serial.println("|");
+  delay(500);
+}
+
 void readPedals(void)
 {
   for(unsigned char c=0x02; c; c >>=1)
   {
-    //set the scanner pin
+    PORTG = c;
     delay(1);
+    
+    ucKeyStateDiff = ucPreviousPedalState^ucPreviousPedalState[ucSet*2];
+
+    if(ucKeyStateDiff!=0x00){ //if there is a change in key state
+      parseLeft(ucKeyStateDiff, ucDebouncedKeyState, (36+(16*ucSet)), 12);
+    }
+    ucPreviousKeyState[ucSet*2] = ucDebouncedKeyState;
+
   }
 }
 

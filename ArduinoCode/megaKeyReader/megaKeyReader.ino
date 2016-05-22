@@ -14,9 +14,8 @@ void setup() {
   //PC = 37 -> PC0 = 30
   DDRC = B00000000; //set as inputs
   DDRL = B11111111; //set as outputs
-
-  DDRL = 0x00;
-  
+  //----------Pedals-----------
+  DDRL = 0x00; 
   DDRB = 0x00;
   DDRG = 0x03;
   

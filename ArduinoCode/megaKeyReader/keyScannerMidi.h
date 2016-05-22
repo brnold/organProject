@@ -5,6 +5,7 @@
 
 void readManuals(void);
 void readPedals(void);
+void testPedals(void);
 void parseLeft(char changedBits, char thePort, char offset, char channel);
 void midiCommandToQueue(char channel, char cmd, char pitch);
 void parseRight(unsigned char changedBits, char thePort, char offset, char channel);
