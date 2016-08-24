@@ -14,8 +14,9 @@ void readManuals(){
   unsigned char ucDebouncedKeyState = 0;
 
   for(unsigned char c=0x80; (unsigned) c>0x08; c >>=1){
-    PORTL = c; //set the scanner pin
+    PORTK = c; //set the scanner pin
     //PA7 = 29-> PA0 = 22
+    //delayMicroseconds(10);
     delay(1);
     //do pins 1-8
    // binaryCharPrint(PINC);
@@ -46,7 +47,8 @@ void readManuals(){
   }
 
   for(unsigned char c=0x08; c; c >>=1){
-    PORTL = c; //set the scanner pin
+    PORTK = c; //set the scanner pin
+    //delayMicroseconds(10);
     delay(1);
     //do pins 1-8
     //Serial.print("1-8: ");
@@ -66,7 +68,6 @@ void readManuals(){
     }
     ucPreviousKeyState[ucSet*2] = ucDebouncedKeyState;
     
-
     //do pins 9-16
     //ucDebouncedKeyState = debounce(PINA, ucSet+1);
     ucDebouncedKeyState = PINA;
@@ -79,9 +80,36 @@ void readManuals(){
     ucPreviousKeyState[ucSet*2+1] = ucDebouncedKeyState;
     ucSet++;
   }
-
-  
  // Serial.println("");
+}
+
+
+void readPedals(void)
+{
+  unsigned char ucDebouncedKeyState, ucKeyStateDiff, ucSet = 0;
+  
+  for(unsigned char c=0x02; c; c >>=1)
+  {
+    PORTG = c;
+    delay(1);
+    ucDebouncedKeyState = PINL;
+    ucKeyStateDiff = ucDebouncedKeyState^ucPreviousPedalState[ucSet*2];
+
+    if(ucKeyStateDiff!=0x00){ //if there is a change in key state
+      parseRight(ucKeyStateDiff, ucDebouncedKeyState, (36+(16*ucSet)), 13);
+    }
+    ucPreviousPedalState[ucSet*2] = ucDebouncedKeyState;
+
+ 
+    ucDebouncedKeyState = PINB;
+    ucKeyStateDiff = ucDebouncedKeyState^ucPreviousPedalState[ucSet*2+1];
+
+    if(ucKeyStateDiff!=0x00){ //if there is a change in key state
+      parseRight(ucKeyStateDiff, ucDebouncedKeyState, (36+(16*ucSet)+8), 13);
+    }
+    ucPreviousPedalState[ucSet*2+1] = ucDebouncedKeyState;
+    ucSet++;
+  }
 }
 
 void testPedals(){
@@ -98,22 +126,6 @@ void testPedals(){
   delay(500);
 }
 
-void readPedals(void)
-{
-  for(unsigned char c=0x02; c; c >>=1)
-  {
-    PORTG = c;
-    delay(1);
-    
-    ucKeyStateDiff = ucPreviousPedalState^ucPreviousPedalState[ucSet*2];
-
-    if(ucKeyStateDiff!=0x00){ //if there is a change in key state
-      parseLeft(ucKeyStateDiff, ucDebouncedKeyState, (36+(16*ucSet)), 12);
-    }
-    ucPreviousKeyState[ucSet*2] = ucDebouncedKeyState;
-
-  }
-}
 
 unsigned char debounce(unsigned char currentbits, char number){
   unsigned char temp1, temp2,temp3,temp4, temp5, debounced=0;
@@ -189,6 +201,7 @@ void parseRight(unsigned char changedBits, char thePort, char offset, char chann
        count++;
    }
 }
+
 
 void binaryCharPrint(char theNumber){
   //thanks http://forum.arduino.cc/index.php?topic=45679.0
