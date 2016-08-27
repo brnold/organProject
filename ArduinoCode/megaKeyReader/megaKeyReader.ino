@@ -3,6 +3,8 @@
 ByteBuffer midiMessageBuffer;
 
 void setup() {
+//this is to see if Git works
+  
 /**
  * PORT A, C, and L are used for the manulas
  * PORT K, B and pins are used for the pedals
